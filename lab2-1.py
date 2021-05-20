@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from time import time
 
 HARMONICS_COUNT = 6
 MAX_FREQUENCY = 1700
@@ -27,11 +28,27 @@ def discrete_fourier_transform(sig):
 		res[p] = abs(sum)
 	return res
 
-sig = rand_sig(HARMONICS_COUNT, MAX_FREQUENCY, DISCRETE_TIMES_COUNT)
 
-DFT = discrete_fourier_transform(sig)
+#Additional task
 
-plt.plot(range(DISCRETE_TIMES_COUNT), DFT)
-plt.xlabel("p value")
+dft_durations = np.zeros(10)
+numpy_durations = np.zeros(10)
+
+for i in range(1, 10):
+	N = i * 64
+	sig = rand_sig(HARMONICS_COUNT, MAX_FREQUENCY, N)
+	before = time()
+	discrete_fourier_transform(sig)
+	after = time()
+	dft_durations[i] = after - before
+	before = time()
+	np.fft.fft(sig)
+	after = time()
+	numpy_durations[i] = after - before
+
+plt.plot(range(10), dft_durations, label = "custom")
+plt.plot(range(10), numpy_durations, label = "numpy")
+plt.legend()
+plt.xlabel("N")
 plt.ylabel("DFT value")
 plt.show()
